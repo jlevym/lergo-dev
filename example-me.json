@@ -1,0 +1,37 @@
+{
+   "hmacKey": "myhmackey",
+   "translations":{
+       "method":"files"
+   },
+   "log4js" : {
+        "appenders" : [
+            { "type" : "console" }
+        ],
+        "levels" : {
+                "[all]":"INFO"
+
+        }
+    },
+   "translations" : {
+       "description" : "use method phraseapp or files",
+       "method" : "files",
+       "phraseAppToken" : "763e0c5319edc79ae9392fc0d498fea9"
+   },
+    "emailSettings" : {
+        "description" : "use lergopro key / secretkey",
+        "type" : "SMTP",
+        "opts" : {
+            "port" : 465,
+            "secureConnection" : true,
+            "accessKeyId": "<PUT_HERE_EMAIL_ACCESS_KEY>",
+            "secretAccessKey": "<PUT_HERE_EMAIL_SECRET_KEY>",
+            "region" : "eu-west-1"
+
+        },
+        "defaultFrom" : "4lergo@gmail.com",
+        "mails" : {
+        }
+    }
+
+
+}

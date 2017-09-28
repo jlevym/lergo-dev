@@ -1,0 +1,1 @@
+vagrant ssh -- -t 'cd /vagrant/app/lergo-ui;grunt server;'

@@ -1,0 +1,71 @@
+---
+# taken from https://www.mbejda.com/deploying-node-applications-with-ansible/
+
+- hosts: default
+  sudo: yes
+
+  vars:
+    - home_dir: /vagrant/app
+    - ui_repo: https://github.com/lergo/lergo-ui.git
+    - ui_dir: lergo-ui
+    - ri_repo: https://github.com/lergo/lergo-ri.git
+    - ri_dir: lergo-ri
+    - nodejs_version: "8.x" # for role geerlingguy.nodejs
+
+  roles:
+    - geerlingguy.nodejs
+    - geerlingguy.git
+    - nsops.mongodb
+
+  tasks:
+    - name: Setup mongod
+      command: bash /vagrant/setup_mongo.sh 
+      
+    - name: Install Packages
+      apt: name={{ item }} update_cache=yes state=latest
+      with_items:
+        - build-essential
+        - git-flow
+        - libfontconfig1 # a phantom-js dependency
+        - xdg-utils # for xdg-mime for Running "open:server" (open) task
+        - w3m # text-based browser for Running "open:server" (open) task
+
+    - name: Install npm modules
+      npm: name={{ item }} global=yes production=yes
+      with_items:
+        - grunt
+        - grunt-cli
+        - bower
+        - pm2 # production process manager for Node.js applications
+
+    - name: Git Clone Repo - UI
+      sudo_user: vagrant
+      git: repo={{ui_repo}} dest={{home_dir}}/{{ui_dir}} update=yes force=yes version=develop recursive=true
+    
+    - name: Running NPM install - UI repo
+      sudo_user: vagrant
+      npm: path={{home_dir}}/{{ui_dir}}
+      ignore_errors: yes
+
+    - name: Running Bower install - UI repo
+      sudo_user: vagrant
+      bower: path={{home_dir}}/{{ui_dir}}
+      failed_when: '"ERR!" in result.stderr'
+      ignore_errors: yes
+
+    - name: Git Clone Repo - Backend
+      sudo_user: vagrant
+      git: repo={{ri_repo}} dest={{home_dir}}/{{ri_dir}} update=yes force=yes version=develop recursive=true
+
+    - name: Creates conf/dev directory 
+      file: path={{home_dir}}/{{ri_dir}}/conf/dev/ state=directory
+    
+    - name: copy me.json
+      copy:
+        src: "../example-me.json"
+        dest: "{{home_dir}}/{{ri_dir}}/conf/dev/me.json"
+
+    - name: Running NPM install - Backend repo
+      sudo_user: vagrant
+      npm: path={{home_dir}}/{{ri_dir}}
+      ignore_errors: yes
