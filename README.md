@@ -7,7 +7,7 @@
 - put mongo dump file's url and secret password in `setup_mongo.db`
     - <PUT_HERE_MONGO_DUMP_FILE_URL> - change to the url of the dump file
     - <PUT_HERE_ENCRYPTION_KEY_FOR_DUMP_FILE> - change to the encryption key for the file
-- put email credentials in example-me.json 
+- put email credentials in `example-me.json` 
     - <PUT_HERE_EMAIL_ACCESS_KEY> - change to email access key
     - <PUT_HERE_EMAIL_SECRET_KEY> - change to email secret access key
 * don't commit those changes
